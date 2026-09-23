@@ -1,0 +1,246 @@
+<!DOCTYPE HTML>
+<html lang="tr">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<head>
+    <title>Vak Wars</title>
+    <style>
+
+        @font-face {
+            font-family: 'vwfont';
+            src: url('vakwarsfont.ttf');
+        }
+
+        * {
+            user-select: none;
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'vwfont';
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            margin: 0;
+        }
+
+        #solvakfoto {
+            transition: transform 0.1s ease;
+        }
+
+        #sagvakfoto {
+            transition: transform 0.1s ease;
+        }
+
+        .buyutme {
+            transform: scale(1.1);
+        }
+
+        .ustortalama {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .sureortalama {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 20vh;
+        }
+
+        .altortalama {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .ortalama {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 50vh;
+        }      
+
+        .vsyazi {
+            font-size: 100px;
+        }
+
+        .solyazi {
+            font-size: 100px;
+        }
+
+        .sagyazi {
+            font-size: 100px;
+        }
+
+        .btn {
+            font-family: 'vwfont';
+            font-size: 64px;
+            padding: 46px 86px;
+        }
+
+            .btn:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+            }
+
+
+    </style>
+</head>
+<body>
+
+    <div class="ustortalama">
+        <div class="vsyazi">VAK WARS</div>
+    </div>
+
+    <div class="sureortalama">
+        <div id="kalansure" class="vsyazi">30</div>
+    </div>
+
+    <div class="ortalama">
+        <button id="solbtn" type="button" class="btn" onclick="solartir()">VAK</button>
+        <img src="foto/solvak.png" id="solvakfoto" alt="vaksol" width="400" height="400" style="margin: 50px">
+        <div id="sonsure" class="vsyazi">VS</div>
+        <img src="foto/sagvak.png" id="sagvakfoto" alt="vaksag" width="400" height="400" style="margin: 50px">
+        <button id="sagbtn" type="button" class="btn" onclick="sagartir()">VAK</button>
+    </div>
+
+    <div class="altortalama">
+        <div id="solsayi" class="solyazi">0</div>
+        <div class="vsyazi">-</div>
+        <div id="sagsayi" class="sagyazi">0</div>
+    </div>
+
+    <script>
+
+        const solsesler = [
+            'ses/1.wav',
+            'ses/2.wav',
+            'ses/3.wav',
+            'ses/4.wav',
+            'ses/5.wav'
+        ];
+
+        function solsescal() {
+            let rastgeleIndeks = Math.floor(Math.random() * solsesler.length);
+            let ses = new Audio(solsesler[rastgeleIndeks]);
+            ses.currentTime = 0;
+            ses.play();
+        }
+
+        const sagsesler = [
+            'ses/6.wav',
+            'ses/7.wav',
+            'ses/8.wav',
+            'ses/9.wav',
+            'ses/10.wav'
+        ];
+
+        function sagsescal() {
+            let rastgeleIndeks = Math.floor(Math.random() * sagsesler.length);
+            let ses = new Audio(sagsesler[rastgeleIndeks]);
+            ses.currentTime = 0;
+            ses.play();
+        }
+
+        let solsayac = 0;
+        let sagsayac = 0;
+        let solfont = 100;
+        let sagfont = 100;
+
+        function oyun() {
+            
+            let sure = 30;
+            let oyunsonusure = 5
+            let kazanan = " "
+
+            sagfont = 100;
+            solfont = 100;
+            document.getElementById("solsayi").style.fontSize = "100px";
+            document.getElementById("sagsayi").style.fontSize = "100px";
+
+            document.getElementById("solbtn").disabled = false;
+            document.getElementById("sagbtn").disabled = false;
+            document.getElementById("kalansure").innerText = sure;
+            document.getElementById("solsayi").innerText = "0";
+            document.getElementById("sagsayi").innerText = "0";
+            solsayac = 0;
+            sagsayac = 0;
+
+            let zamanlayici = setInterval(function () {
+                sure = sure - 1;
+                document.getElementById("kalansure").innerText = sure;
+
+                if (sure == 0) {
+                    clearInterval(zamanlayici);
+
+                    let ses = new Audio('ses/son.wav');
+                    ses.currentTime = 0;
+                    ses.play();
+
+                    if (solsayac < sagsayac) {
+                        kazanan = "SAG VAK KAZANDI!";
+                    }
+                    if (solsayac > sagsayac) {
+                        kazanan = "SOL VAK KAZANDI!";
+                    }
+                    if (solsayac == sagsayac) {
+                        kazanan = "BERABERE!";
+                    }
+
+                    let oyunsonu = setInterval(function() {
+                        document.getElementById("kalansure").innerText = `${kazanan} ${oyunsonusure}`;
+                        oyunsonusure = oyunsonusure - 1;  
+                        document.getElementById("solbtn").disabled = true;
+                        document.getElementById("sagbtn").disabled = true;
+                        if (oyunsonusure == 0) {
+                            clearInterval(oyunsonu);                           
+                            oyun();
+                        }
+                    }, 1000);
+                }
+            }, 1000);
+        }
+        
+        function solartir() {
+            solsayac = solsayac + 1;
+            solsescal();
+
+            solfont = solfont + 1.01;
+            let solfontbuyutme = document.getElementById("solsayi");
+            solfontbuyutme.innerText = solsayac;
+            solfontbuyutme.style.fontSize = solfont + "px";
+
+            let solresim = document.getElementById("solvakfoto");
+            solresim.classList.add("buyutme");
+            setTimeout(function () {
+                solresim.classList.remove("buyutme");
+            }, 100);
+        }
+
+        function sagartir() {
+            sagsayac = sagsayac + 1;
+            sagsescal();
+
+            sagfont = sagfont + 1.01;
+            let sagfontbuyutme = document.getElementById("sagsayi");
+            sagfontbuyutme.innerText = sagsayac;
+            sagfontbuyutme.style.fontSize = sagfont + "px";
+
+            let sagresim = document.getElementById("sagvakfoto");
+            sagresim.classList.add("buyutme");
+            setTimeout(function () {
+                sagresim.classList.remove("buyutme");
+            }, 100);
+        }
+
+        window.onload = function () {
+            oyun();
+        };
+
+    </script>
+</body>
+</html>
